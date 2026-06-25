@@ -1,0 +1,12 @@
+{
+  "name": "constrular-catalogo",
+  "version": "1.0.0",
+  "description": "Catálogo Digital Premium da Constrular Materiais de Construção",
+  "main": "index.html",
+  "scripts": {
+    "dev": "lite-server"
+  },
+  "devDependencies": {
+    "lite-server": "^2.6.1"
+  }
+}

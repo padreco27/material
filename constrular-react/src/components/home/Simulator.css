@@ -1,0 +1,17 @@
+.simulator-section { padding:80px 0;background:var(--bg-sec);border-top:1px solid var(--border);border-bottom:1px solid var(--border); }
+.sim-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:40px;box-shadow:var(--shadow-lg); }
+.sim-grid { display:grid;grid-template-columns:1fr 1fr;gap:40px; }
+.sim-form { display:flex;flex-direction:column;gap:20px; }
+.sim-field { display:flex;flex-direction:column;gap:8px; }
+.sim-field label { font-size:14px;font-weight:600; }
+.sim-disclaimer { font-size:12px;color:var(--text-sec);line-height:1.4; }
+.sim-results { background:var(--bg-sec);border-radius:var(--radius);padding:28px;border:1px solid var(--border);display:flex;flex-direction:column;gap:20px; }
+.sim-results-title { font-size:20px;display:flex;align-items:center;gap:10px;color:var(--primary); }
+.dark .sim-results-title { color:#fff; }
+.sim-list { display:flex;flex-direction:column;gap:14px; }
+.sim-row { display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px dashed var(--border);font-size:15px; }
+.sim-row:last-child { border-bottom:none; }
+.sim-val { font-weight:800;font-size:18px;color:var(--accent);font-family:'Outfit',sans-serif; }
+.sim-add-btn { width:100%;margin-top:auto; }
+
+@media (max-width:768px) { .sim-grid { grid-template-columns:1fr; } }

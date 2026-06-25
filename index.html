@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Constrular | Catálogo Digital Premium</title>
+  <meta name="description" content="Encontre tudo para sua obra na Constrular. Cimento, ferragens, hidráulica, elétrica, acabamentos e ferramentas com preços imbativeis e entrega rápida.">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- HEADER / NAVBAR -->
+  <header>
+    <div class="container header-container">
+      <div class="logo-wrapper">
+        <div class="logo-icon">C</div>
+        <div class="logo-text">Constru<span>lar</span></div>
+      </div>
+      
+      <!-- Desktop Navigation -->
+      <nav class="nav-links" id="navLinks">
+        <span class="nav-link active" onclick="scrollToSection('home')">Início</span>
+        <span class="nav-link" onclick="scrollToSection('sobre')">Sobre Nós</span>
+        <span class="nav-link" onclick="scrollToSection('produtos')">Produtos</span>
+        <span class="nav-link" onclick="scrollToSection('promocoes')">Promoções</span>
+        <span class="nav-link" onclick="scrollToSection('simulador')">Simulador</span>
+        <span class="nav-link" onclick="scrollToSection('profissional')">Profissionais</span>
+        <span class="nav-link" onclick="scrollToSection('orcamento')">Orçamento</span>
+      </nav>
+
+      <div class="nav-actions">
+        <!-- Dark Mode Toggle -->
+        <button class="action-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Alternar Tema">
+          <i data-lucide="moon"></i>
+        </button>
+        
+        <!-- Favorites Badge -->
+        <button class="action-btn favorite-btn" onclick="toggleFavoritesDrawer()" title="Favoritos">
+          <i data-lucide="heart"></i>
+          <span class="badge" id="favBadgeCount">0</span>
+        </button>
+
+        <!-- Compare Badge -->
+        <button class="action-btn" onclick="openCompareModal()" title="Comparar Produtos" id="compareNavBtn">
+          <i data-lucide="columns-2"></i>
+          <span class="badge" id="compareBadgeCount">0</span>
+        </button>
+
+        <!-- Budget Cart Badge -->
+        <button class="action-btn" onclick="scrollToSection('orcamento')" title="Ver Orçamento">
+          <i data-lucide="shopping-cart"></i>
+          <span class="badge" id="cartBadgeCount">0</span>
+        </button>
+
+        <!-- Mobile Menu Toggle -->
+        <div class="mobile-menu-toggle" onclick="toggleMobileMenu()" id="mobileMenuBtn">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. BANNER PRINCIPAL (HERO) -->
+    <section class="hero" id="home">
+      <div class="hero-overlay"></div>
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <span class="badge-tag">Qualidade Garantida</span>
+          <h1>Tudo para sua obra <span>em um só lugar</span></h1>
+          <p>Qualidade, economia e entrega rápida para sua construção. Encontre os melhores materiais estruturais, elétricos, hidráulicos e acabamentos das principais marcas do mercado.</p>
+          <div class="hero-btns">
+            <button class="btn btn-primary" onclick="scrollToSection('orcamento')">
+              <i data-lucide="file-text"></i> Solicitar Orçamento
+            </button>
+            <button class="btn btn-outline" onclick="scrollToSection('produtos')">
+              Ver Produtos
+            </button>
+            <a href="https://wa.me/5511999999999?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento." target="_blank" class="btn btn-secondary">
+              <i data-lucide="message-circle"></i> Falar no WhatsApp
+            </a>
+          </div>
+        </div>
+        <div class="hero-image-wrapper">
+          <img src="hero_construction.png" alt="Obra residencial moderna em andamento" id="heroImage">
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. SOBRE A EMPRESA -->
+    <section class="about" id="sobre">
+      <div class="container">
+        <div class="section-header">
+          <h2>Sobre a Constrular</h2>
+          <div class="divider"></div>
+          <p>Mais que vender materiais, nós entregamos soluções sólidas para realizar os seus projetos de vida.</p>
+        </div>
+        <div class="about-grid">
+          <div class="about-card">
+            <div class="about-card-icon"><i data-lucide="award"></i></div>
+            <h3>Anos de Experiência</h3>
+            <p>Mais de 15 anos de história fornecendo materiais de confiança no mercado da construção civil.</p>
+          </div>
+          <div class="about-card">
+            <div class="about-card-icon"><i data-lucide="users"></i></div>
+            <h3>Atendimento Especializado</h3>
+            <p>Nossa equipe técnica ajuda você a calcular e escolher as melhores soluções para sua obra.</p>
+          </div>
+          <div class="about-card">
+            <div class="about-card-icon"><i data-lucide="truck"></i></div>
+            <h3>Entregas Rápidas</h3>
+            <p>Frota própria que garante que o material chegue no canteiro de obras no prazo acordado.</p>
+          </div>
+          <div class="about-card">
+            <div class="about-card-icon"><i data-lucide="layout-grid"></i></div>
+            <h3>Grande Variedade</h3>
+            <p>Mais de 5.000 itens cadastrados, do cimento básico às ferramentas elétricas de precisão.</p>
+          </div>
+          <div class="about-card">
+            <div class="about-card-icon"><i data-lucide="building-2"></i></div>
+            <h3>PF & PJ</h3>
+            <p>Atendimento especial para pessoa física, construtoras, empreiteiros e profissionais liberais.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. SISTEMA DE BUSCA, FILTROS E PRODUTOS -->
+    <section class="catalog-section" id="produtos">
+      <div class="container">
+        <div class="section-header">
+          <h2>Catálogo de Produtos</h2>
+          <div class="divider"></div>
+          <p>Explore nosso estoque completo, filtre por categorias e marcas ou pesquise diretamente o que precisa.</p>
+        </div>
+
+        <!-- Painel de Busca e Filtro Rápido -->
+        <div class="search-filter-panel">
+          <div class="search-row">
+            <div class="search-input-wrapper">
+              <i data-lucide="search"></i>
+              <input type="text" class="search-input" id="searchInput" placeholder="Pesquisar por nome do produto, marca, categoria ou código (ex: CTL-1001)..." onkeyup="handleSearch(event)">
+              
+              <!-- Autosuggest list -->
+              <div class="search-suggestions" id="searchSuggestions"></div>
+            </div>
+          </div>
+          <div class="filter-row">
+            <!-- Filtro de Categoria -->
+            <div class="filter-group">
+              <label class="filter-label">Categoria</label>
+              <select class="filter-select" id="categoryFilter" onchange="filterProducts()">
+                <option value="todos">Todas as Categorias</option>
+                <option value="cimento-e-argamassas">Cimento e Argamassas</option>
+                <option value="estrutural">Estrutural</option>
+                <option value="ferragens">Ferragens</option>
+                <option value="hidraulica">Hidráulica</option>
+                <option value="elétrica">Elétrica</option>
+                <option value="acabamento">Acabamento</option>
+                <option value="ferramentas">Ferramentas</option>
+              </select>
+            </div>
+            
+            <!-- Filtro de Marca -->
+            <div class="filter-group">
+              <label class="filter-label">Marca</label>
+              <select class="filter-select" id="brandFilter" onchange="filterProducts()">
+                <option value="todos">Todas as Marcas</option>
+                <!-- Marcas preenchidas dinamicamente pelo JS -->
+              </select>
+            </div>
+
+            <!-- Filtro de Preço Máximo -->
+            <div class="filter-group">
+              <label class="filter-label">Preço Máximo</label>
+              <div class="range-slider-wrapper">
+                <input type="range" class="price-slider" id="priceRange" min="0" max="600" value="600" oninput="updatePriceSliderLabel(this.value)" onchange="filterProducts()">
+                <span id="priceRangeLabel">R$ 600,00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layout do Catálogo (Sidebar + Grid) -->
+        <div class="catalog-layout">
+          <!-- Sidebar lateral (visível em desktop) -->
+          <aside class="catalog-sidebar">
+            <div class="sidebar-widget">
+              <h3 class="widget-title">Categorias</h3>
+              <div class="category-list">
+                <div class="category-item active" data-category="todos" onclick="selectSidebarCategory('todos')">
+                  <span>Todos os Produtos</span>
+                  <span class="category-count" id="count-todos">0</span>
+                </div>
+                <div class="category-item" data-category="cimento-e-argamassas" onclick="selectSidebarCategory('cimento-e-argamassas')">
+                  <span>Cimento e Argamassa</span>
+                  <span class="category-count" id="count-cimento-e-argamassas">0</span>
+                </div>
+                <div class="category-item" data-category="estrutural" onclick="selectSidebarCategory('estrutural')">
+                  <span>Estrutural</span>
+                  <span class="category-count" id="count-estrutural">0</span>
+                </div>
+                <div class="category-item" data-category="ferragens" onclick="selectSidebarCategory('ferragens')">
+                  <span>Ferragens</span>
+                  <span class="category-count" id="count-ferragens">0</span>
+                </div>
+                <div class="category-item" data-category="hidraulica" onclick="selectSidebarCategory('hidraulica')">
+                  <span>Hidráulica</span>
+                  <span class="category-count" id="count-hidraulica">0</span>
+                </div>
+                <div class="category-item" data-category="elétrica" onclick="selectSidebarCategory('elétrica')">
+                  <span>Elétrica</span>
+                  <span class="category-count" id="count-elétrica">0</span>
+                </div>
+                <div class="category-item" data-category="acabamento" onclick="selectSidebarCategory('acabamento')">
+                  <span>Acabamento</span>
+                  <span class="category-count" id="count-acabamento">0</span>
+                </div>
+                <div class="category-item" data-category="ferramentas" onclick="selectSidebarCategory('ferramentas')">
+                  <span>Ferramentas</span>
+                  <span class="category-count" id="count-ferramentas">0</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="sidebar-widget">
+              <h3 class="widget-title">Filtro de Marcas</h3>
+              <div class="brand-checkbox-list" id="brandCheckboxList">
+                <!-- Checkboxes inseridos via JS -->
+              </div>
+            </div>
+          </aside>
+
+          <!-- Grid de Exibição dos Produtos -->
+          <div class="products-wrapper">
+            <div class="catalog-toolbar">
+              <span class="results-count" id="resultsCount">Mostrando 0 produtos</span>
+              <div class="toolbar-controls">
+                <!-- Ordenação -->
+                <select class="sort-select" id="sortSelect" onchange="filterProducts()">
+                  <option value="default">Relevância</option>
+                  <option value="price-asc">Preço: Menor ao Maior</option>
+                  <option value="price-desc">Preço: Maior ao Menor</option>
+                  <option value="name-asc">Nome: A - Z</option>
+                </select>
+                <!-- Modo de Exibição (Grid / Lista) -->
+                <div class="layout-toggles">
+                  <div class="layout-toggle-btn active" id="btnLayoutGrid" onclick="toggleLayout('grid')" title="Exibição em Grade">
+                    <i data-lucide="layout-grid"></i>
+                  </div>
+                  <div class="layout-toggle-btn" id="btnLayoutList" onclick="toggleLayout('list')" title="Exibição em Lista">
+                    <i data-lucide="list"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Grid de cartões de produtos -->
+            <div class="products-grid" id="productsGrid">
+              <!-- Cards gerados dinamicamente via JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. ÁREA DE PROMOÇÕES (OFFER OF THE DAY) -->
+    <section class="promo-section" id="promocoes">
+      <div class="container">
+        <div class="section-header">
+          <h2>Ofertas Exclusivas</h2>
+          <div class="divider"></div>
+          <p>Aproveite nossos preços promocionais por tempo limitado. Economize hoje mesmo na sua obra!</p>
+        </div>
+        
+        <div class="promo-banner">
+          <div class="promo-grid">
+            <div class="promo-info">
+              <span class="promo-tag">Destaque da Semana</span>
+              <h3>Porcelanato Bianco Polido 80x80cm Retificado - Portobello</h3>
+              <p class="promo-desc">Deixe sua sala ou dormitório com brilho e elegância incomparáveis. O porcelanato Bianco Polido tem acabamento retificado que possibilita juntas finas de 1.5mm, trazendo uniformidade visual ao piso.</p>
+              
+              <div class="promo-savings">
+                <i data-lucide="sparkles"></i> Economia real de <span>R$ 45,00 por caixa</span> (1.92 m²)
+              </div>
+
+              <!-- Live Countdown -->
+              <div>
+                <p style="margin-bottom: 8px; font-weight: 600; font-size: 14px; opacity: 0.8;">Esta oferta termina em:</p>
+                <div class="promo-timer" id="countdownTimer">
+                  <div class="timer-box">
+                    <span class="timer-num" id="daysBox">00</span>
+                    <span class="timer-lbl">Dias</span>
+                  </div>
+                  <div class="timer-box">
+                    <span class="timer-num" id="hoursBox">00</span>
+                    <span class="timer-lbl">Horas</span>
+                  </div>
+                  <div class="timer-box">
+                    <span class="timer-num" id="minsBox">00</span>
+                    <span class="timer-lbl">Min</span>
+                  </div>
+                  <div class="timer-box">
+                    <span class="timer-num" id="secsBox">00</span>
+                    <span class="timer-lbl">Seg</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Imagem e Preços da Promo -->
+            <div class="promo-product-image">
+              <img src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?q=80&w=800&auto=format&fit=crop" alt="Porcelanato Bianco Polido Portobello">
+              <div class="promo-prices">
+                <span class="promo-curr-price">R$ 89,90 <span style="font-size: 14px; color: var(--text-sec); font-weight: normal;">/ m²</span></span>
+                <span class="promo-old-price-label">R$ 114,90</span>
+              </div>
+              <div style="display: flex; gap: 10px; width: 100%;">
+                <button class="btn btn-primary" style="flex: 1; padding: 10px;" onclick="addPromoItemToBudget(26)">
+                  <i data-lucide="plus"></i> Adicionar ao Orçamento
+                </button>
+                <button class="btn btn-secondary" style="flex: 1; padding: 10px; background-color: #25D366;" onclick="buyViaWhatsapp(26)">
+                  <i data-lucide="message-circle"></i> Comprar agora
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. SIMULADOR DE MATERIAIS -->
+    <section class="simulator-section" id="simulador">
+      <div class="container">
+        <div class="section-header">
+          <h2>Simulador de Materiais</h2>
+          <div class="divider"></div>
+          <p>Informe os dados da sua obra e receba uma estimativa rápida de materiais essenciais (cimento, areia, brita e tijolos).</p>
+        </div>
+
+        <div class="simulator-card">
+          <div class="simulator-grid">
+            <!-- Form do simulador -->
+            <div class="simulator-form">
+              <div class="sim-input-group">
+                <label for="simArea">Área Total da Construção (m²)</label>
+                <input type="number" class="sim-input" id="simArea" placeholder="Ex: 50" min="1" value="50" oninput="calculateMaterials()">
+              </div>
+              <div class="sim-input-group">
+                <label for="simComodos">Quantidade de Cômodos</label>
+                <input type="number" class="sim-input" id="simComodos" placeholder="Ex: 4" min="1" value="3" oninput="calculateMaterials()">
+              </div>
+              <div class="sim-input-group">
+                <label for="simObraType">Tipo Principal de Obra</label>
+                <select class="sim-input" id="simObraType" onchange="calculateMaterials()">
+                  <option value="estrutura">Alvenaria Estrutural (Fundações e Paredes)</option>
+                  <option value="reboco">Reboco e Emboço (Revestimento de Paredes)</option>
+                  <option value="contrapiso">Contrapiso (Nivelamento de Lajes/Chão)</option>
+                </select>
+              </div>
+              <p style="font-size: 12px; color: var(--text-sec); line-height: 1.4;">* Os cálculos são estimativas médias baseadas em tabelas padrão de consumo de materiais para construção residencial convencional. Recomendamos sempre a validação final com o seu engenheiro ou mestre de obras.</p>
+            </div>
+
+            <!-- Resultados do simulador -->
+            <div class="simulator-results">
+              <div>
+                <h3 class="sim-results-title"><i data-lucide="calculator"></i> Estimativa Calculada</h3>
+                <div class="sim-results-list">
+                  <div class="sim-result-item">
+                    <span class="sim-item-name">Cimento CP II (50kg)</span>
+                    <span class="sim-item-qty" id="resultCement">0 sacos</span>
+                  </div>
+                  <div class="sim-result-item">
+                    <span class="sim-item-name">Areia Média/Fina</span>
+                    <span class="sim-item-qty" id="resultSand">0 m³</span>
+                  </div>
+                  <div class="sim-result-item">
+                    <span class="sim-item-name">Brita nº 1</span>
+                    <span class="sim-item-qty" id="resultGravel">0 m³</span>
+                  </div>
+                  <div class="sim-result-item">
+                    <span class="sim-item-name">Tijolos Baianos 8 furos</span>
+                    <span class="sim-item-qty" id="resultBricks">0 peças</span>
+                  </div>
+                </div>
+              </div>
+              <button class="btn btn-secondary" style="width: 100%; margin-top: 20px;" onclick="addCalculatedMaterialsToCart()">
+                <i data-lucide="shopping-cart"></i> Adicionar Estimativa ao Orçamento
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. ÁREA PARA PROFISSIONAIS -->
+    <section class="professionals" id="profissional">
+      <div class="container">
+        <div class="pro-banner">
+          <div class="pro-grid">
+            <div class="pro-content">
+              <span class="badge-tag" style="background-color: rgba(11, 37, 69, 0.1); color: var(--primary);">Parceria Constrular</span>
+              <h2>Área Exclusiva para Profissionais</h2>
+              <p>Trabalha como Pedreiro, Engenheiro, Arquiteto ou gerencia uma Construtora? Temos condições especiais para otimizar os custos e prazos de suas obras.</p>
+              
+              <div class="pro-benefits-list">
+                <div class="pro-benefit-item">
+                  <div class="pro-benefit-icon">✓</div>
+                  <div class="pro-benefit-text">
+                    <h4>Descontos Especiais</h4>
+                    <p>Tabela diferenciada de preços para compras em maior volume ou indicações recorrentes.</p>
+                  </div>
+                </div>
+                <div class="pro-benefit-item">
+                  <div class="pro-benefit-icon">✓</div>
+                  <div class="pro-benefit-text">
+                    <h4>Condições Comerciais Facilitadas</h4>
+                    <p>Opções de faturamento flexíveis para empresas jurídicas cadastradas.</p>
+                  </div>
+                </div>
+                <div class="pro-benefit-item">
+                  <div class="pro-benefit-icon">✓</div>
+                  <div class="pro-benefit-text">
+                    <h4>Atendimento Prioritário</h4>
+                    <p>Canal exclusivo no WhatsApp com vendedores prontos para agilizar cotações e remessas de materiais.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Formulário Profissionais -->
+            <div class="pro-form">
+              <h3>Cadastre-se como Parceiro</h3>
+              <form id="proForm" onsubmit="submitProForm(event)">
+                <div class="form-group">
+                  <label for="proName">Nome Completo</label>
+                  <input type="text" class="form-control" id="proName" required placeholder="Seu nome completo">
+                </div>
+                <div class="form-group">
+                  <label for="proRole">Sua Ocupação / Cargo</label>
+                  <select class="form-control" id="proRole" required>
+                    <option value="pedreiro">Pedreiro / Mestre de Obras</option>
+                    <option value="engenheiro">Engenheiro Civil</option>
+                    <option value="arquiteto">Arquiteto / Design de Interiores</option>
+                    <option value="construtora">Representante de Construtora</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="proPhone">Telefone / WhatsApp</label>
+                  <input type="tel" class="form-control" id="proPhone" required placeholder="(11) 99999-9999">
+                </div>
+                <div class="form-group">
+                  <label for="proEmail">E-mail</label>
+                  <input type="email" class="form-control" id="proEmail" required placeholder="seuemail@exemplo.com">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                  Solicitar Parceria
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. FORMULÁRIO DE ORÇAMENTO E CARRINHO INTEGRADO -->
+    <section class="budget-form-section" id="orcamento">
+      <div class="container">
+        <div class="section-header">
+          <h2>Solicitação de Orçamento</h2>
+          <div class="divider"></div>
+          <p>Veja os itens selecionados do catálogo, ajuste as quantidades e envie para nosso setor comercial via WhatsApp ou e-mail.</p>
+        </div>
+
+        <div class="budget-grid">
+          <!-- Lista de Produtos Selecionados -->
+          <div class="budget-list-card">
+            <h3 style="font-size: 20px; margin-bottom: 20px;"><i data-lucide="list"></i> Itens do Orçamento</h3>
+            
+            <div class="budget-items-container" id="budgetItemsContainer">
+              <!-- Preenchido via JS (ou Empty State abaixo) -->
+              <div class="budget-empty-state" id="budgetEmptyState">
+                <i data-lucide="shopping-cart"></i>
+                <p>Seu orçamento está vazio.</p>
+                <p style="font-size: 13px; margin-top: 4px;">Navegue pelos produtos e clique em "Solicitar Orçamento" para adicionar itens.</p>
+              </div>
+            </div>
+
+            <!-- Resumo Financeiro Estimado -->
+            <div class="budget-summary">
+              <span>Valor Estimado (Materiais):</span>
+              <span class="budget-summary-val" id="budgetTotalVal">R$ 0,00</span>
+            </div>
+          </div>
+
+          <!-- Formulário do Cliente -->
+          <div class="budget-form-card">
+            <h3>Dados para Contato</h3>
+            <form id="customerBudgetForm" onsubmit="submitBudgetForm(event)">
+              <div class="form-group">
+                <label for="custName">Nome / Empresa *</label>
+                <input type="text" class="form-control" id="custName" required placeholder="Nome do responsável">
+              </div>
+              <div class="form-group">
+                <label for="custPhone">WhatsApp / Telefone *</label>
+                <input type="tel" class="form-control" id="custPhone" required placeholder="(11) 99999-9999">
+              </div>
+              <div class="form-group">
+                <label for="custEmail">E-mail *</label>
+                <input type="email" class="form-control" id="custEmail" required placeholder="exemplo@dominio.com">
+              </div>
+              <div class="form-group">
+                <label for="custCity">Cidade / Estado *</label>
+                <input type="text" class="form-control" id="custCity" required placeholder="Ex: São Paulo - SP">
+              </div>
+              <div class="form-group">
+                <label for="custMessage">Observações (Local da entrega, prazo da obra, etc.)</label>
+                <textarea class="form-control" id="custMessage" rows="3" placeholder="Insira informações adicionais aqui..."></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                <i data-lucide="send"></i> Enviar Solicitação Comercial
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- GAVETA LATERAL DE FAVORITOS -->
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeAllDrawers()"></div>
+  <div class="drawer" id="favoritesDrawer">
+    <div class="drawer-header">
+      <h3><i data-lucide="heart" style="color: var(--danger); vertical-align: middle;"></i> Meus Favoritos</h3>
+      <div class="drawer-close" onclick="toggleFavoritesDrawer()"><i data-lucide="x"></i></div>
+    </div>
+    <div class="drawer-body" id="favoritesDrawerBody">
+      <!-- Inserido dinamicamente via JS -->
+    </div>
+  </div>
+
+  <!-- BARRA DE COMPARAÇÃO INFERIOR -->
+  <div class="compare-panel" id="comparePanel">
+    <div class="compare-panel-header">
+      <h4><i data-lucide="columns-2"></i> Comparar Produtos (máx. 3)</h4>
+      <div class="compare-panel-close" onclick="closeComparePanel()"><i data-lucide="x"></i></div>
+    </div>
+    <div class="compare-items-grid">
+      <!-- 3 Slots de Comparação -->
+      <div class="compare-item-slot compare-slot-empty" id="compareSlot0" onclick="scrollToSection('produtos')">
+        <i data-lucide="plus"></i> Adicionar
+      </div>
+      <div class="compare-item-slot compare-slot-empty" id="compareSlot1" onclick="scrollToSection('produtos')">
+        <i data-lucide="plus"></i> Adicionar
+      </div>
+      <div class="compare-item-slot compare-slot-empty" id="compareSlot2" onclick="scrollToSection('produtos')">
+        <i data-lucide="plus"></i> Adicionar
+      </div>
+      <!-- Botão Ação de Comparar -->
+      <button class="btn btn-primary" style="padding: 10px 16px;" onclick="showComparisonTableModal()">
+        Comparar
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL DE COMPARAÇÃO (TABELA COMPLETA) -->
+  <div class="modal-overlay" id="compareModalOverlay">
+    <div class="modal-content" style="max-width: 800px;">
+      <div class="modal-close-btn" onclick="closeCompareModalOverlay()"><i data-lucide="x"></i></div>
+      <div style="padding: 30px;">
+        <h3 style="font-size: 24px; margin-bottom: 20px; color: var(--primary);"><i data-lucide="columns-2"></i> Tabela de Comparação Técnica</h3>
+        <div class="compare-modal-body" id="compareModalTableBody">
+          <!-- Inserido via JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE DETALHES DO PRODUTO (PÁGINA INDIVIDUAL DINÂMICA) -->
+  <div class="modal-overlay" id="productModalOverlay">
+    <div class="modal-content">
+      <div class="modal-close-btn" onclick="closeProductModal()"><i data-lucide="x"></i></div>
+      
+      <!-- Detalhes Superiores: Galeria + Info Básica -->
+      <div class="modal-grid">
+        <!-- Galeria Interativa -->
+        <div class="modal-gallery">
+          <div class="modal-main-image">
+            <img src="" alt="Imagem Principal" id="modalMainImg">
+          </div>
+          <div class="modal-thumbnails" id="modalThumbnails">
+            <!-- Miniaturas via JS -->
+          </div>
+        </div>
+        
+        <!-- Informações e Compra -->
+        <div class="modal-info">
+          <div>
+            <span class="modal-brand" id="modalBrand">Marca</span>
+            <h2 class="modal-title" id="modalTitle">Nome do Produto</h2>
+            <p style="font-size: 12px; color: var(--text-sec); margin-top: 4px;" id="modalCode">Código: CTL-0000</p>
+          </div>
+          
+          <p style="font-size: 14px; line-height: 1.5; color: var(--text-sec);" id="modalShortDesc">Descrição resumida do material.</p>
+          
+          <div class="modal-price-rating">
+            <div>
+              <span class="modal-price" id="modalPrice">R$ 0,00</span>
+              <span style="font-size: 14px; color: var(--text-sec);" id="modalUnit">/ unidade</span>
+            </div>
+            <div class="product-rating">
+              <i data-lucide="star"></i>
+              <span id="modalRatingScore">4.8</span>
+              <span id="modalReviewsCount">(120 avaliações)</span>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <p style="font-size: 13px; font-weight: 600;" id="modalAvailability"><i data-lucide="check" style="color: var(--success); vertical-align: middle;"></i> Disponível em Estoque</p>
+          </div>
+
+          <div class="modal-actions">
+            <button class="btn btn-primary" id="modalAddBudgetBtn">
+              <i data-lucide="plus"></i> Orçamento
+            </button>
+            <button class="btn btn-secondary" style="background-color: #25D366;" id="modalWhatsappBtn">
+              <i data-lucide="message-circle"></i> Comprar via Whats
+            </button>
+          </div>
+          
+          <!-- Compartilhar e Favorito no Modal -->
+          <div style="display: flex; gap: 16px; margin-top: 8px;">
+            <button class="btn btn-outline" style="flex: 1; padding: 8px;" id="modalFavBtn">
+              <i data-lucide="heart"></i> Favoritar
+            </button>
+            <button class="btn btn-outline" style="flex: 1; padding: 8px;" id="modalShareBtn">
+              <i data-lucide="share-2"></i> Compartilhar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Abas de Especificações / Aplicações / Avaliações / Vídeos -->
+      <div class="modal-tabs-section">
+        <div class="modal-tabs-header">
+          <button class="modal-tab-btn active" onclick="switchModalTab('tabDesc')">Descrição</button>
+          <button class="modal-tab-btn" onclick="switchModalTab('tabSpecs')">Especificações</button>
+          <button class="modal-tab-btn" onclick="switchModalTab('tabApps')">Aplicações</button>
+          <button class="modal-tab-btn" onclick="switchModalTab('tabVideo')">Demonstração</button>
+          <button class="modal-tab-btn" onclick="switchModalTab('tabReviews')">Avaliações</button>
+        </div>
+
+        <!-- Conteúdo das Abas -->
+        <div class="modal-tab-content">
+          <!-- Aba Descrição -->
+          <div class="modal-tab-pane active" id="tabDesc">
+            <p style="font-size: 15px; line-height: 1.6; color: var(--text-sec);" id="modalLongDesc">Descrição completa detalhada do produto.</p>
+          </div>
+
+          <!-- Aba Specs -->
+          <div class="modal-tab-pane" id="tabSpecs">
+            <table class="specs-table" id="modalSpecsTable">
+              <!-- Linhas via JS -->
+            </table>
+          </div>
+
+          <!-- Aba Aplicações -->
+          <div class="modal-tab-pane" id="tabApps">
+            <ul class="applications-list" id="modalAppsList">
+              <!-- Itens via JS -->
+            </ul>
+          </div>
+
+          <!-- Aba Vídeo -->
+          <div class="modal-tab-pane" id="tabVideo">
+            <div class="video-container">
+              <iframe id="modalVideoFrame" src="" title="Vídeo demonstrativo do produto" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+          </div>
+
+          <!-- Aba Avaliações -->
+          <div class="modal-tab-pane" id="tabReviews">
+            <div class="reviews-summary">
+              <div class="reviews-score" id="modalReviewAvg">4.8</div>
+              <div class="reviews-stars">
+                <div class="reviews-stars-row">
+                  <i data-lucide="star"></i>
+                  <i data-lucide="star"></i>
+                  <i data-lucide="star"></i>
+                  <i data-lucide="star"></i>
+                  <i data-lucide="star"></i>
+                </div>
+                <span class="reviews-count-lbl" id="modalReviewSummaryCount">Baseado em 120 avaliações</span>
+              </div>
+            </div>
+            
+            <div class="reviews-list" id="modalReviewsList">
+              <!-- Comentários via JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carrossel de Relacionados -->
+      <div class="modal-related-section">
+        <h3 style="font-size: 20px; margin-bottom: 20px; border-top: 1px solid var(--border); padding-top: 24px;">Produtos Relacionados</h3>
+        <div class="modal-related-grid" id="modalRelatedGrid">
+          <!-- Cards Relacionados via JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHATSAPP FLOATING BUTTON -->
+  <a href="https://wa.me/5511999999999?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento%20dos%20produtos%20selecionados." target="_blank" class="whatsapp-float" id="whatsappFloatBtn" title="Fale Conosco no WhatsApp">
+    <i data-lucide="message-circle" style="width: 32px; height: 32px; margin-top: 14px; margin-left: 14px;"></i>
+  </a>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Info da empresa -->
+        <div class="footer-info">
+          <div class="logo-wrapper">
+            <div class="logo-icon" style="background: linear-gradient(135deg, #FFF, var(--accent)); color: var(--primary);">C</div>
+            <div class="logo-text">Constru<span>lar</span></div>
+          </div>
+          <p class="footer-desc">A Constrular oferece soluções completas e materiais de altíssima qualidade para todas as etapas da sua construção civil ou reforma residencial.</p>
+          <div class="social-links">
+            <a href="#" class="social-btn" title="Facebook"><i data-lucide="facebook"></i></a>
+            <a href="#" class="social-btn" title="Instagram"><i data-lucide="instagram"></i></a>
+            <a href="#" class="social-btn" title="Youtube"><i data-lucide="youtube"></i></a>
+            <a href="#" class="social-btn" title="LinkedIn"><i data-lucide="linkedin"></i></a>
+          </div>
+        </div>
+        
+        <!-- Links Rápidos -->
+        <div class="footer-col">
+          <h4>Navegação</h4>
+          <div class="footer-links">
+            <a onclick="scrollToSection('home')">Início</a>
+            <a onclick="scrollToSection('sobre')">Sobre Nós</a>
+            <a onclick="scrollToSection('produtos')">Produtos</a>
+            <a onclick="scrollToSection('promocoes')">Promoções</a>
+            <a onclick="scrollToSection('simulador')">Simulador de Materiais</a>
+            <a onclick="scrollToSection('profissional')">Área do Profissional</a>
+            <a onclick="scrollToSection('orcamento')">Solicitar Orçamento</a>
+          </div>
+        </div>
+
+        <!-- Contatos e Horário -->
+        <div class="footer-col">
+          <h4>Atendimento</h4>
+          <div class="footer-links">
+            <div class="footer-contact-item">
+              <i data-lucide="map-pin"></i>
+              <span>Av. da Construção, 1500 - Distrito Industrial<br>São Paulo - SP, CEP 01234-567</span>
+            </div>
+            <div class="footer-contact-item">
+              <i data-lucide="phone"></i>
+              <span>(11) 4004-9876</span>
+            </div>
+            <div class="footer-contact-item">
+              <i data-lucide="message-square"></i>
+              <span>(11) 99999-9999 (WhatsApp)</span>
+            </div>
+            <div class="footer-contact-item">
+              <i data-lucide="mail"></i>
+              <span>contato@constrularmateriais.com.br</span>
+            </div>
+            <div class="footer-contact-item">
+              <i data-lucide="clock"></i>
+              <span>Segunda a Sexta: 07:00 às 18:00<br>Sábados: 08:00 às 14:00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mapa, QR Code e PDF -->
+        <div class="footer-col">
+          <h4>Localização & Recursos</h4>
+          <div class="footer-map-qr">
+            <!-- Google Maps Iframe Placeholder -->
+            <div class="footer-map-placeholder">
+              <iframe src="https://www.google.com/maps/embed?pb=!11m18!1m12!1m3!1d3657.4896260270034!2d-46.6543167!3d-23.5510651!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c8da0aa315%3A0xd59f943179a97e72!2sAv.%20Paulista%2C%20São%20Paulo%20-%20SP!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr" width="100%" height="100%" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+            
+            <!-- WhatsApp QR Code para Orçamentos rápidos -->
+            <div class="footer-qr-wrapper">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wa.me/5511999999999?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento." alt="QR Code WhatsApp Constrular" class="footer-qr-img">
+              <div class="footer-qr-lbl">Orçamento Rápido</div>
+            </div>
+          </div>
+          
+          <button class="btn btn-outline" style="color: #FFF; border-color: rgba(255,255,255,0.3); width: 100%; display: flex;" onclick="window.print()">
+            <i data-lucide="download"></i> Baixar Catálogo em PDF
+          </button>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Constrular Materiais de Construção. Todos os direitos reservados. CNPJ: 12.345.678/0001-99.</p>
+        <p>Desenvolvido com foco em qualidade e conversão comercial.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="products.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+.about { padding:80px 0;background:var(--bg-main); }
+.about-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:24px; }
+.about-card { background:var(--bg-sec);border:1px solid var(--border);padding:30px 22px;border-radius:var(--radius);text-align:center;transition:var(--transition);display:flex;flex-direction:column;align-items:center;gap:16px; }
+.about-card:hover { transform:translateY(-8px);box-shadow:var(--shadow-lg);border-color:var(--accent); }
+.about-icon { width:60px;height:60px;border-radius:50%;background:rgba(242,100,25,.1);color:var(--accent);display:flex;align-items:center;justify-content:center; }
+.about-card h3 { font-size:17px; }
+.about-card p { font-size:14px;color:var(--text-sec);line-height:1.5; }
