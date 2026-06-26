@@ -4,13 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Constrular | Catálogo Digital Premium</title>
-  <meta name="description" content="Encontre tudo para sua obra na Constrular. Cimento, ferragens, hidráulica, elétrica, acabamentos e ferramentas com preços imbativeis e entrega rápida.">
+  <meta name="description" content="Encontre tudo para sua obra na Constrular. Cimento, ferragens, hidráulica, elétrica, acabamentos e ferramentas com preços imbatíveis e entrega rápida.">
+  <meta property="og:title" content="Constrular | Catálogo Digital Premium">
+  <meta property="og:description" content="Encontre tudo para sua obra na Constrular. Cimento, ferragens, hidráulica, elétrica, acabamentos e ferramentas com preços imbatíveis e entrega rápida.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://constrularmateriais.com.br">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=1200&auto=format&fit=crop">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://constrularmateriais.com.br">
+  
+  <!-- Google Fonts: preconnect + display=swap -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- CSS Stylesheet -->
   <link rel="stylesheet" href="style.css">
   
   <!-- Lucide Icons CDN -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/lucide@0.344.0"></script>
 </head>
 <body>
 
@@ -23,46 +35,46 @@
       </div>
       
       <!-- Desktop Navigation -->
-      <nav class="nav-links" id="navLinks">
-        <span class="nav-link active" onclick="scrollToSection('home')">Início</span>
-        <span class="nav-link" onclick="scrollToSection('sobre')">Sobre Nós</span>
-        <span class="nav-link" onclick="scrollToSection('produtos')">Produtos</span>
-        <span class="nav-link" onclick="scrollToSection('promocoes')">Promoções</span>
-        <span class="nav-link" onclick="scrollToSection('simulador')">Simulador</span>
-        <span class="nav-link" onclick="scrollToSection('profissional')">Profissionais</span>
-        <span class="nav-link" onclick="scrollToSection('orcamento')">Orçamento</span>
+      <nav class="nav-links" id="navLinks" role="navigation" aria-label="Navegação principal">
+        <button class="nav-link active" onclick="scrollToSection('home')" tabindex="0">Início</button>
+        <button class="nav-link" onclick="scrollToSection('sobre')" tabindex="0">Sobre Nós</button>
+        <button class="nav-link" onclick="scrollToSection('produtos')" tabindex="0">Produtos</button>
+        <button class="nav-link" onclick="scrollToSection('promocoes')" tabindex="0">Promoções</button>
+        <button class="nav-link" onclick="scrollToSection('simulador')" tabindex="0">Simulador</button>
+        <button class="nav-link" onclick="scrollToSection('profissional')" tabindex="0">Profissionais</button>
+        <button class="nav-link" onclick="scrollToSection('orcamento')" tabindex="0">Orçamento</button>
       </nav>
 
       <div class="nav-actions">
         <!-- Dark Mode Toggle -->
-        <button class="action-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Alternar Tema">
+        <button class="action-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Alternar Tema" aria-label="Alternar tema claro/escuro">
           <i data-lucide="moon"></i>
         </button>
         
         <!-- Favorites Badge -->
-        <button class="action-btn favorite-btn" onclick="toggleFavoritesDrawer()" title="Favoritos">
+        <button class="action-btn favorite-btn" onclick="toggleFavoritesDrawer()" title="Favoritos" aria-label="Abrir lista de favoritos">
           <i data-lucide="heart"></i>
           <span class="badge" id="favBadgeCount">0</span>
         </button>
 
         <!-- Compare Badge -->
-        <button class="action-btn" onclick="openCompareModal()" title="Comparar Produtos" id="compareNavBtn">
+        <button class="action-btn" onclick="openCompareModal()" title="Comparar Produtos" id="compareNavBtn" aria-label="Comparar produtos selecionados">
           <i data-lucide="columns-2"></i>
           <span class="badge" id="compareBadgeCount">0</span>
         </button>
 
         <!-- Budget Cart Badge -->
-        <button class="action-btn" onclick="scrollToSection('orcamento')" title="Ver Orçamento">
+        <button class="action-btn" onclick="scrollToSection('orcamento')" title="Ver Orçamento" aria-label="Abrir orçamento">
           <i data-lucide="shopping-cart"></i>
           <span class="badge" id="cartBadgeCount">0</span>
         </button>
 
         <!-- Mobile Menu Toggle -->
-        <div class="mobile-menu-toggle" onclick="toggleMobileMenu()" id="mobileMenuBtn">
+        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" id="mobileMenuBtn" aria-label="Abrir menu de navegação" aria-expanded="false">
           <span></span>
           <span></span>
           <span></span>
-        </div>
+        </button>
       </div>
     </div>
   </header>
@@ -83,7 +95,7 @@
             <button class="btn btn-outline" onclick="scrollToSection('produtos')">
               Ver Produtos
             </button>
-            <a href="https://wa.me/5511999999999?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento." target="_blank" class="btn btn-secondary">
+            <a href="https://wa.me/5511999999999?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento." target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
               <i data-lucide="message-circle"></i> Falar no WhatsApp
             </a>
           </div>
@@ -146,7 +158,7 @@
           <div class="search-row">
             <div class="search-input-wrapper">
               <i data-lucide="search"></i>
-              <input type="text" class="search-input" id="searchInput" placeholder="Pesquisar por nome do produto, marca, categoria ou código (ex: CTL-1001)..." onkeyup="handleSearch(event)">
+              <input type="text" class="search-input" id="searchInput" placeholder="Pesquisar por nome do produto, marca, categoria ou código (ex: CTL-1001)..." onkeyup="handleSearch(event)" aria-label="Pesquisar produtos">
               
               <!-- Autosuggest list -->
               <div class="search-suggestions" id="searchSuggestions"></div>
@@ -241,7 +253,7 @@
           <!-- Grid de Exibição dos Produtos -->
           <div class="products-wrapper">
             <div class="catalog-toolbar">
-              <span class="results-count" id="resultsCount">Mostrando 0 produtos</span>
+              <span class="results-count" id="resultsCount" aria-live="polite">Mostrando 0 produtos</span>
               <div class="toolbar-controls">
                 <!-- Ordenação -->
                 <select class="sort-select" id="sortSelect" onchange="filterProducts()">
@@ -571,7 +583,7 @@
   </div>
 
   <!-- MODAL DE COMPARAÇÃO (TABELA COMPLETA) -->
-  <div class="modal-overlay" id="compareModalOverlay">
+  <div class="modal-overlay" id="compareModalOverlay" role="dialog" aria-modal="true" aria-label="Tabela de comparação de produtos">
     <div class="modal-content" style="max-width: 800px;">
       <div class="modal-close-btn" onclick="closeCompareModalOverlay()"><i data-lucide="x"></i></div>
       <div style="padding: 30px;">
@@ -584,7 +596,7 @@
   </div>
 
   <!-- MODAL DE DETALHES DO PRODUTO (PÁGINA INDIVIDUAL DINÂMICA) -->
-  <div class="modal-overlay" id="productModalOverlay">
+  <div class="modal-overlay" id="productModalOverlay" role="dialog" aria-modal="true" aria-label="Detalhes do produto">
     <div class="modal-content">
       <div class="modal-close-btn" onclick="closeProductModal()"><i data-lucide="x"></i></div>
       
@@ -718,9 +730,14 @@
     </div>
   </div>
 
+  <!-- BACK TO TOP BUTTON -->
+  <button class="back-to-top" id="backToTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Voltar ao topo" title="Voltar ao topo">
+    <i data-lucide="arrow-up"></i>
+  </button>
+
   <!-- WHATSAPP FLOATING BUTTON -->
-  <a href="https://wa.me/5511999999999?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento%20dos%20produtos%20selecionados." target="_blank" class="whatsapp-float" id="whatsappFloatBtn" title="Fale Conosco no WhatsApp">
-    <i data-lucide="message-circle" style="width: 32px; height: 32px; margin-top: 14px; margin-left: 14px;"></i>
+  <a href="https://wa.me/5511999999999?text=Olá,%20gostaria%20de%20solicitar%20um%20orçamento%20dos%20produtos%20selecionados." target="_blank" rel="noopener noreferrer" class="whatsapp-float" id="whatsappFloatBtn" title="Fale Conosco no WhatsApp" aria-label="Fale conosco no WhatsApp">
+    <i data-lucide="message-circle"></i>
   </a>
 
   <!-- FOOTER -->

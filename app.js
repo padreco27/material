@@ -6,17 +6,53 @@ let activeCategory = "todos";
 let layoutMode = "grid";
 let currentTheme = "light";
 
+// --- UTILITÁRIOS ---
+function formatCurrency(value) {
+  return `R$ ${value.toFixed(2)}`;
+}
+
+function getProduct(id) {
+  return products.find(p => p.id === id);
+}
+
+function getNumericInput(id) {
+  return parseFloat(document.getElementById(id).value) || 0;
+}
+
+function buildWhatsAppUrl(text) {
+  return `https://wa.me/5511999999999?text=${encodeURIComponent(text)}`;
+}
+
+function batchCreateIcons() {
+  lucide.createIcons();
+}
+
+function debounce(fn, delay) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+function getHeaderOffset() {
+  const header = document.querySelector('header');
+  return header ? header.offsetHeight : 70;
+}
+
 // --- INICIALIZAÇÃO DO APP ---
 document.addEventListener("DOMContentLoaded", () => {
   loadLocalStorage();
   initTheme();
+  initBackToTop();
   initPromoCountdown();
   populateBrandFilters();
   filterProducts();
   calculateMaterials();
   updateHeaderBadges();
+  handleQueryParams();
   
-  // Registrar cliques fora dos modais/sugestões para fechá-los
+  // Delegate clicks outside modals/suggestions
   document.addEventListener("click", (e) => {
     const suggestions = document.getElementById("searchSuggestions");
     const searchInput = document.getElementById("searchInput");
@@ -25,21 +61,122 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Recriar ícones lucide iniciais
-  lucide.createIcons();
+  // Event delegation for product cards
+  document.getElementById("productsGrid").addEventListener("click", handleProductAction);
+
+  // Event delegation for favorites drawer
+  document.getElementById("favoritesDrawerBody").addEventListener("click", (e) => {
+    const target = e.target.closest("[data-action]");
+    if (!target) return;
+    const id = parseInt(target.dataset.id);
+    const action = target.dataset.action;
+    switch (action) {
+      case "modal": openProductModal(id); closeAllDrawers(); break;
+      case "budget-fav": addToCart(id, 1); closeAllDrawers(); break;
+      case "remove-fav": toggleFavorite(id); break;
+    }
+  });
+
+  // Event delegation for budget cart
+  document.getElementById("budgetItemsContainer").addEventListener("click", (e) => {
+    const target = e.target.closest("[data-action]");
+    if (!target) return;
+    const id = parseInt(target.dataset.id);
+    const action = target.dataset.action;
+    switch (action) {
+      case "qty-dec": changeCartQty(id, -1); break;
+      case "qty-inc": changeCartQty(id, 1); break;
+      case "remove-cart": removeFromCart(id); break;
+    }
+  });
+
+  document.getElementById("budgetItemsContainer").addEventListener("change", (e) => {
+    const target = e.target.closest("[data-action]");
+    if (!target) return;
+    const id = parseInt(target.dataset.id);
+    if (target.dataset.action === "qty-input") {
+      updateCartInput(id, target.value);
+    }
+  });
+
+  // Event delegation for compare panel
+  document.getElementById("comparePanel").addEventListener("click", (e) => {
+    const target = e.target.closest("[data-action]");
+    if (!target) return;
+    const id = parseInt(target.dataset.id);
+    if (target.dataset.action === "remove-compare") {
+      toggleCompare(id, e);
+    }
+  });
+
+  // Event delegation for compare modal table
+  document.getElementById("compareModalTableBody").addEventListener("click", (e) => {
+    const target = e.target.closest("[data-action]");
+    if (!target) return;
+    const id = parseInt(target.dataset.id);
+    const action = target.dataset.action;
+    switch (action) {
+      case "compare-budget": addToCart(id, 1); closeCompareModalOverlay(); break;
+      case "compare-whatsapp": buyViaWhatsapp(id); break;
+    }
+  });
+
+  // Event delegation for modal related products
+  document.getElementById("modalRelatedGrid").addEventListener("click", (e) => {
+    const target = e.target.closest("[data-action]");
+    if (!target) return;
+    const id = parseInt(target.dataset.id);
+    if (target.dataset.action === "modal") openProductModal(id);
+  });
+
+  batchCreateIcons();
 });
+
+// --- PRODUCT GRID EVENT HANDLER (DELEGATION) ---
+function handleProductAction(e) {
+  const target = e.target.closest("[data-action]");
+  if (!target) return;
+  const id = parseInt(target.dataset.id);
+  const action = target.dataset.action;
+  switch (action) {
+    case "modal": openProductModal(id); break;
+    case "fav": toggleFavorite(id, e); break;
+    case "compare": toggleCompare(id, e); break;
+    case "budget": addToCart(id, 1); break;
+    case "whatsapp": buyViaWhatsapp(id); break;
+  }
+}
+
+// --- QUERY PARAMS (DEEP LINKING) ---
+function handleQueryParams() {
+  const params = new URLSearchParams(window.location.search);
+  const productId = params.get('product');
+  if (productId) {
+    const id = parseInt(productId);
+    if (getProduct(id)) {
+      setTimeout(() => openProductModal(id), 500);
+    }
+  }
+}
 
 // --- PERSISTÊNCIA E LOCALSTORAGE ---
 function loadLocalStorage() {
-  const localCart = localStorage.getItem("constrular_cart");
-  const localFavs = localStorage.getItem("constrular_favorites");
-  const localCompare = localStorage.getItem("constrular_compare");
-  const localTheme = localStorage.getItem("constrular_theme");
+  try {
+    const localCart = localStorage.getItem("constrular_cart");
+    const localFavs = localStorage.getItem("constrular_favorites");
+    const localCompare = localStorage.getItem("constrular_compare");
+    const localTheme = localStorage.getItem("constrular_theme");
 
-  if (localCart) cart = JSON.parse(localCart);
-  if (localFavs) favorites = JSON.parse(localFavs);
-  if (localCompare) compareList = JSON.parse(localCompare);
-  if (localTheme) currentTheme = localTheme;
+    if (localCart) cart = JSON.parse(localCart);
+    if (localFavs) favorites = JSON.parse(localFavs);
+    if (localCompare) compareList = JSON.parse(localCompare);
+    if (localTheme) currentTheme = localTheme;
+  } catch (e) {
+    // Se localStorage corrompido, resetar
+    cart = [];
+    favorites = [];
+    compareList = [];
+  }
 }
 
 function saveCart() {
@@ -69,7 +206,14 @@ function updateHeaderBadges() {
 
 // --- TEMA (MODO CLARO / ESCURO) ---
 function initTheme() {
-  if (currentTheme === "dark" || (currentTheme === "light" && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  if (currentTheme === "dark") {
+    document.body.classList.add("dark");
+    setThemeIcon("sun");
+  } else if (currentTheme === "light") {
+    document.body.classList.remove("dark");
+    setThemeIcon("moon");
+  } else if (prefersDark) {
     document.body.classList.add("dark");
     currentTheme = "dark";
     setThemeIcon("sun");
@@ -96,19 +240,25 @@ function toggleTheme() {
 function setThemeIcon(iconName) {
   const btn = document.getElementById("themeToggleBtn");
   btn.innerHTML = `<i data-lucide="${iconName}"></i>`;
-  lucide.createIcons();
+  batchCreateIcons();
+}
+
+// --- BACK TO TOP ---
+function initBackToTop() {
+  const btn = document.getElementById("backToTopBtn");
+  if (!btn) return;
+  window.addEventListener("scroll", () => {
+    btn.classList.toggle("visible", window.scrollY > 400);
+  });
 }
 
 // --- NAVEGAÇÃO SUAVE E MENU MOBILE ---
 function scrollToSection(sectionId) {
   const section = document.getElementById(sectionId);
   if (section) {
-    // Se o menu mobile estiver aberto, fecha
-    document.getElementById("navLinks").classList.remove("active");
-    document.getElementById("mobileMenuBtn").classList.remove("active");
+    closeMobileMenu();
     
-    // Rola para a seção
-    const offset = 80; // altura do header
+    const offset = getHeaderOffset();
     const bodyRect = document.body.getBoundingClientRect().top;
     const elementRect = section.getBoundingClientRect().top;
     const elementPosition = elementRect - bodyRect;
@@ -119,7 +269,6 @@ function scrollToSection(sectionId) {
       behavior: "smooth"
     });
     
-    // Atualiza links ativos
     document.querySelectorAll(".nav-link").forEach(link => {
       link.classList.remove("active");
     });
@@ -133,8 +282,19 @@ function scrollToSection(sectionId) {
 function toggleMobileMenu() {
   const navLinks = document.getElementById("navLinks");
   const burgerBtn = document.getElementById("mobileMenuBtn");
-  navLinks.classList.toggle("active");
+  const isActive = navLinks.classList.toggle("active");
   burgerBtn.classList.toggle("active");
+  burgerBtn.setAttribute("aria-expanded", isActive);
+  burgerBtn.setAttribute("aria-label", isActive ? "Fechar menu de navegação" : "Abrir menu de navegação");
+}
+
+function closeMobileMenu() {
+  const navLinks = document.getElementById("navLinks");
+  const burgerBtn = document.getElementById("mobileMenuBtn");
+  navLinks.classList.remove("active");
+  burgerBtn.classList.remove("active");
+  burgerBtn.setAttribute("aria-expanded", "false");
+  burgerBtn.setAttribute("aria-label", "Abrir menu de navegação");
 }
 
 // --- FILTRO E BUSCA DE PRODUTOS ---
@@ -166,7 +326,7 @@ function populateBrandFilters() {
 }
 
 function updatePriceSliderLabel(val) {
-  document.getElementById("priceRangeLabel").innerText = `R$ ${parseFloat(val).toFixed(2)}`;
+  document.getElementById("priceRangeLabel").innerText = formatCurrency(parseFloat(val));
 }
 
 function selectSidebarCategory(category) {
@@ -259,36 +419,37 @@ function renderProductsGrid(list) {
 
   if (list.length === 0) {
     grid.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 48px 0; color: var(--text-sec);">
-        <i data-lucide="info" style="width: 48px; height: 48px; margin-bottom: 16px;"></i>
-        <p style="font-size: 16px; font-weight: 600;">Nenhum produto atende a estes critérios de filtro.</p>
-        <button class="btn btn-outline" style="margin-top: 16px;" onclick="resetFilters()">Limpar Filtros</button>
+      <div class="empty-products">
+        <i data-lucide="info"></i>
+        <p>Nenhum produto atende a estes critérios de filtro.</p>
+        <button class="btn btn-outline" onclick="resetFilters()">Limpar Filtros</button>
       </div>
     `;
-    lucide.createIcons();
+    batchCreateIcons();
     return;
   }
 
+  const fragment = document.createDocumentFragment();
   list.forEach(product => {
     const isFav = favorites.includes(product.id);
     const isCompare = compareList.includes(product.id);
-    const hasPromo = product.id === 26 || product.id === 4; // Mock promo items
+    const hasPromo = product.id === 26 || product.id === 4;
     const oldPrice = hasPromo ? product.price * 1.25 : null;
 
     const card = document.createElement("div");
     card.className = "product-card";
     card.innerHTML = `
-      <div class="product-card-image" onclick="openProductModal(${product.id})">
-        <img src="${product.images[0]}" alt="${product.name}">
+      <div class="product-card-image" data-action="modal" data-id="${product.id}">
+        <img src="${product.images[0]}" alt="${product.name}" loading="lazy">
         <div class="product-badges">
           ${hasPromo ? '<span class="badge-item badge-promo">Oferta</span>' : ''}
           ${product.availability ? '<span class="badge-item badge-availability">Estoque</span>' : '<span class="badge-item badge-out-stock">Sob Consulta</span>'}
         </div>
       </div>
-      <button class="product-wishlist-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite(${product.id}, event)" title="Favoritar">
+      <button class="product-wishlist-btn ${isFav ? 'active' : ''}" data-action="fav" data-id="${product.id}" title="Favoritar" aria-label="${isFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}">
         <i data-lucide="heart" ${isFav ? 'fill="var(--danger)"' : ''}></i>
       </button>
-      <button class="product-compare-btn ${isCompare ? 'active' : ''}" onclick="toggleCompare(${product.id}, event)" title="Comparar Especificações">
+      <button class="product-compare-btn ${isCompare ? 'active' : ''}" data-action="compare" data-id="${product.id}" title="Comparar Especificações" aria-label="${isCompare ? 'Remover da comparação' : 'Adicionar à comparação'}">
         <i data-lucide="columns-2"></i>
       </button>
       
@@ -297,34 +458,34 @@ function renderProductsGrid(list) {
           <span>${product.brand}</span>
           <span>${product.code}</span>
         </div>
-        <h3 class="product-title" onclick="openProductModal(${product.id})">${product.name}</h3>
+        <h3 class="product-title" data-action="modal" data-id="${product.id}">${product.name}</h3>
         <div class="product-rating">
           <i data-lucide="star" fill="var(--star)"></i>
           <span>${product.rating}</span>
           <span>(${product.reviewsCount})</span>
         </div>
         <div class="product-price-wrapper">
-          ${oldPrice ? `<span class="product-old-price">R$ ${oldPrice.toFixed(2)}</span>` : ''}
-          <span class="product-price">R$ ${product.price.toFixed(2)}</span>
+          ${oldPrice ? `<span class="product-old-price">${formatCurrency(oldPrice)}</span>` : ''}
+          <span class="product-price">${formatCurrency(product.price)}</span>
           <span class="product-unit">/ ${product.unit}</span>
         </div>
       </div>
       
       <div class="product-card-actions">
-        <button class="btn-card-budget" onclick="addToCart(${product.id}, 1)">
+        <button class="btn-card-budget" data-action="budget" data-id="${product.id}">
           <i data-lucide="plus"></i> Orçar
         </button>
-        <button class="btn-card-whatsapp" onclick="buyViaWhatsapp(${product.id})">
+        <button class="btn-card-whatsapp" data-action="whatsapp" data-id="${product.id}">
           <i data-lucide="message-square"></i> WhatsApp
         </button>
       </div>
     `;
-    grid.appendChild(card);
+    fragment.appendChild(card);
   });
 
-  // Atualizar visualização do layout (grid ou list)
+  grid.appendChild(fragment);
   toggleLayout(layoutMode);
-  lucide.createIcons();
+  batchCreateIcons();
 }
 
 function resetFilters() {
@@ -435,7 +596,7 @@ function updateModalFavButtonState(id) {
     modalFavBtn.style.color = "var(--text-main)";
     modalFavBtn.style.borderColor = "var(--border)";
   }
-  lucide.createIcons();
+  batchCreateIcons();
 }
 
 function toggleFavoritesDrawer() {
@@ -458,40 +619,36 @@ function renderFavoritesList() {
   body.innerHTML = "";
 
   if (favorites.length === 0) {
-    body.innerHTML = `
-      <div style="text-align: center; padding: 40px 0; color: var(--text-sec);">
-        <i data-lucide="heart" style="width: 48px; height: 48px; margin-bottom: 12px; color: var(--border);"></i>
-        <p>Sua lista de favoritos está vazia.</p>
-      </div>
-    `;
-    lucide.createIcons();
+    body.innerHTML = `<div class="fav-empty"><i data-lucide="heart"></i><p>Sua lista de favoritos está vazia.</p></div>`;
+    batchCreateIcons();
     return;
   }
 
   favorites.forEach(id => {
-    const product = products.find(p => p.id === id);
+    const product = getProduct(id);
     if (!product) return;
 
     const div = document.createElement("div");
     div.className = "fav-item";
+    div.setAttribute("data-product-id", id);
     div.innerHTML = `
-      <img src="${product.images[0]}" alt="${product.name}" class="fav-item-img" onclick="openProductModal(${product.id}); closeAllDrawers();">
+      <img src="${product.images[0]}" alt="${product.name}" class="fav-item-img" data-action="modal" data-id="${id}">
       <div class="fav-item-info">
-        <h4 class="fav-item-title" onclick="openProductModal(${product.id}); closeAllDrawers();">${product.name}</h4>
-        <span class="fav-item-price">R$ ${product.price.toFixed(2)}</span>
+        <h4 class="fav-item-title" data-action="modal" data-id="${id}">${product.name}</h4>
+        <span class="fav-item-price">${formatCurrency(product.price)}</span>
       </div>
-      <div style="display: flex; gap: 8px;">
-        <button class="action-btn" onclick="addToCart(${product.id}, 1); closeAllDrawers();" title="Adicionar ao Orçamento">
+      <div class="fav-actions">
+        <button class="action-btn" data-action="budget-fav" data-id="${id}" title="Adicionar ao Orçamento" aria-label="Adicionar ao orçamento">
           <i data-lucide="plus"></i>
         </button>
-        <button class="action-btn" onclick="toggleFavorite(${product.id})" style="color: var(--danger)" title="Remover dos Favoritos">
+        <button class="action-btn" data-action="remove-fav" data-id="${id}" title="Remover dos Favoritos" aria-label="Remover dos favoritos">
           <i data-lucide="trash"></i>
         </button>
       </div>
     `;
     body.appendChild(div);
   });
-  lucide.createIcons();
+  batchCreateIcons();
 }
 
 // --- COMPARISON PANEL & MODAL SYSTEM ---
@@ -503,7 +660,7 @@ function toggleCompare(id, event) {
     compareList.splice(idx, 1);
   } else {
     if (compareList.length >= 3) {
-      alert("Você pode comparar no máximo 3 produtos ao mesmo tempo.");
+      showToast("Você pode comparar no máximo 3 produtos ao mesmo tempo.");
       return;
     }
     compareList.push(id);
@@ -525,19 +682,20 @@ function updateComparePanel() {
   for (let i = 0; i < 3; i++) {
     const slot = document.getElementById(`compareSlot${i}`);
     if (compareList[i]) {
-      const product = products.find(p => p.id === compareList[i]);
+      const product = getProduct(compareList[i]);
+      if (!product) continue;
       slot.className = "compare-item-slot";
       slot.innerHTML = `
         <img src="${product.images[0]}" alt="${product.name}" class="compare-slot-img">
         <span class="compare-slot-title">${product.name.substring(0, 20)}...</span>
-        <div class="compare-slot-remove" onclick="toggleCompare(${product.id}, event)"><i data-lucide="x" style="width: 10px; height: 10px;"></i></div>
+        <button class="compare-slot-remove" data-action="remove-compare" data-id="${product.id}" aria-label="Remover da comparação"><i data-lucide="x"></i></button>
       `;
     } else {
       slot.className = "compare-item-slot compare-slot-empty";
       slot.innerHTML = `<i data-lucide="plus"></i> Adicionar`;
     }
   }
-  lucide.createIcons();
+  batchCreateIcons();
 }
 
 function closeComparePanel() {
@@ -546,7 +704,7 @@ function closeComparePanel() {
 
 function openCompareModal() {
   if (compareList.length < 2) {
-    alert("Selecione pelo menos 2 produtos para comparar as especificações.");
+    showToast("Selecione pelo menos 2 produtos para comparar as especificações.");
     return;
   }
   showComparisonTableModal();
@@ -557,9 +715,8 @@ function showComparisonTableModal() {
   const body = document.getElementById("compareModalTableBody");
   modal.classList.add("active");
 
-  const comparedProducts = compareList.map(id => products.find(p => p.id === id));
+  const comparedProducts = compareList.map(id => getProduct(id)).filter(Boolean);
 
-  // Criar tabela comparativa de atributos
   let tableHtml = `<table class="compare-table"><thead><tr><th>Especificação</th>`;
   
   comparedProducts.forEach(p => {
@@ -568,7 +725,7 @@ function showComparisonTableModal() {
         <div style="text-align: center;">
           <img src="${p.images[0]}" alt="${p.name}" style="width: 80px; height: 80px; object-fit: contain; background: #fff; border-radius: 4px; margin-bottom: 8px;">
           <h4 style="font-size: 13px;">${p.name}</h4>
-          <span style="color: var(--accent); font-weight: 700; font-size: 14px;">R$ ${p.price.toFixed(2)}</span>
+          <span style="color: var(--accent); font-weight: 700; font-size: 14px;">${formatCurrency(p.price)}</span>
         </div>
       </th>`;
   });
@@ -602,10 +759,10 @@ function showComparisonTableModal() {
     tableHtml += `
       <td>
         <div style="display: flex; gap: 8px; flex-direction: column;">
-          <button class="btn btn-primary" style="padding: 8px; font-size: 12px;" onclick="addToCart(${p.id}, 1); closeCompareModalOverlay();">
+          <button class="btn btn-primary compare-action-budget" data-action="compare-budget" data-id="${p.id}" style="padding: 8px; font-size: 12px;">
             Orçar
           </button>
-          <button class="btn btn-secondary" style="padding: 8px; font-size: 12px; background-color: #25D366;" onclick="buyViaWhatsapp(${p.id})">
+          <button class="btn btn-secondary" style="padding: 8px; font-size: 12px; background-color: #25D366;" data-action="compare-whatsapp" data-id="${p.id}">
             WhatsApp
           </button>
         </div>
@@ -614,7 +771,7 @@ function showComparisonTableModal() {
 
   tableHtml += `</tr></tbody></table>`;
   body.innerHTML = tableHtml;
-  lucide.createIcons();
+  batchCreateIcons();
 }
 
 function closeCompareModalOverlay() {
@@ -623,19 +780,18 @@ function closeCompareModalOverlay() {
 
 // --- DYNAMIC PRODUCT MODAL (PÁGINA INDIVIDUAL) ---
 function openProductModal(id) {
-  const product = products.find(p => p.id === id);
+  const product = getProduct(id);
   if (!product) return;
 
   const overlay = document.getElementById("productModalOverlay");
   overlay.classList.add("active");
 
-  // Preencher info básica
   document.getElementById("modalBrand").innerText = product.brand;
   document.getElementById("modalTitle").innerText = product.name;
   document.getElementById("modalCode").innerText = `Código: ${product.code}`;
   document.getElementById("modalShortDesc").innerText = product.shortDescription;
   document.getElementById("modalLongDesc").innerText = product.description;
-  document.getElementById("modalPrice").innerText = `R$ ${product.price.toFixed(2)}`;
+  document.getElementById("modalPrice").innerText = formatCurrency(product.price);
   document.getElementById("modalUnit").innerText = `/ ${product.unit}`;
   document.getElementById("modalRatingScore").innerText = product.rating;
   document.getElementById("modalReviewsCount").innerText = `(${product.reviewsCount} avaliações)`;
@@ -707,8 +863,16 @@ function openProductModal(id) {
   });
 
   // Vídeo demonstrativo
+  const videoTab = document.querySelector('.modal-tab-btn[onclick*="tabVideo"]');
   const iframe = document.getElementById("modalVideoFrame");
-  iframe.src = product.videoUrl;
+  if (product.videoUrl && !product.videoUrl.includes('dQw4w9WgXcQ')) {
+    iframe.src = product.videoUrl;
+    if (videoTab) videoTab.style.display = '';
+  } else {
+    iframe.src = '';
+    iframe.srcdoc = '<div style="display:flex;align-items:center;justify-content:center;height:100%;background:#f4f6f9;color:#64748B;font-family:sans-serif;flex-direction:column;gap:8px;"><p style="font-size:18px;font-weight:600;">Vídeo em breve</p><p style="font-size:14px;">O vídeo demonstrativo deste produto será disponibilizado em breve.</p></div>';
+    if (videoTab) videoTab.style.display = 'none';
+  }
 
   // Renderizar avaliações fictícias dinâmicas
   renderReviewsList(product);
@@ -719,7 +883,7 @@ function openProductModal(id) {
   // Mostrar sempre primeira aba por padrão
   switchModalTab('tabDesc');
 
-  lucide.createIcons();
+  batchCreateIcons();
 }
 
 function closeProductModal() {
@@ -791,8 +955,7 @@ function renderReviewsList(product) {
 }
 
 function viewPhotoFullscreen(url) {
-  // Simples visualização de foto em nova aba
-  window.open(url, '_blank');
+  window.open(url, '_blank', 'noopener');
 }
 
 function renderRelatedProducts(currProd) {
@@ -813,12 +976,12 @@ function renderRelatedProducts(currProd) {
     card.className = "product-card";
     card.style.fontSize = "12px";
     card.innerHTML = `
-      <div class="product-card-image" style="height: 120px;" onclick="openProductModal(${p.id})">
-        <img src="${p.images[0]}" alt="${p.name}">
+      <div class="product-card-image" style="height: 120px;" data-action="modal" data-id="${p.id}">
+        <img src="${p.images[0]}" alt="${p.name}" loading="lazy">
       </div>
       <div class="product-card-body" style="padding: 12px; gap: 6px;">
-        <h4 class="product-title" style="font-size: 13px; height: 36px;" onclick="openProductModal(${p.id})">${p.name}</h4>
-        <span style="color: var(--accent); font-weight: 700;">R$ ${p.price.toFixed(2)}</span>
+        <h4 class="product-title" style="font-size: 13px; height: 36px;" data-action="modal" data-id="${p.id}">${p.name}</h4>
+        <span style="color: var(--accent); font-weight: 700;">${formatCurrency(p.price)}</span>
       </div>
     `;
     grid.appendChild(card);
@@ -837,14 +1000,14 @@ function shareProductLink(product) {
   } else {
     // Fallback: copiar link para área de transferência
     navigator.clipboard.writeText(`${window.location.href}?product=${product.id}`)
-      .then(() => alert("Link do produto copiado para a área de transferência!"))
-      .catch(() => alert("Não foi possível copiar o link."));
+      .then(() => showToast("Link do produto copiado para a área de transferência!"))
+      .catch(() => showToast("Não foi possível copiar o link."));
   }
 }
 
 // --- BUDGET CART ENGINE (GAVETA / PÁGINA) ---
 function addToCart(id, qty) {
-  const product = products.find(p => p.id === id);
+  const product = getProduct(id);
   if (!product) return;
 
   const cartItem = cart.find(item => item.id === id);
@@ -920,7 +1083,7 @@ function renderCart() {
   let totalSum = 0;
 
   cart.forEach(item => {
-    const product = products.find(p => p.id === item.id);
+    const product = getProduct(item.id);
     if (!product) return;
 
     const itemTotal = product.price * item.quantity;
@@ -928,30 +1091,31 @@ function renderCart() {
 
     const div = document.createElement("div");
     div.className = "budget-item";
+    div.setAttribute("data-product-id", item.id);
     div.innerHTML = `
       <img src="${product.images[0]}" alt="${product.name}" class="budget-item-img">
       <div class="budget-item-info">
         <h4 class="budget-item-title">${product.name}</h4>
         <div class="budget-item-code">Código: ${product.code} | Marca: ${product.brand}</div>
-        <div class="budget-item-price">R$ ${product.price.toFixed(2)} x ${item.quantity} = <strong>R$ ${itemTotal.toFixed(2)}</strong></div>
+        <div class="budget-item-price">${formatCurrency(product.price)} x ${item.quantity} = <strong>${formatCurrency(itemTotal)}</strong></div>
       </div>
-      <div class="budget-qty-controls">
-        <button class="qty-btn" onclick="changeCartQty(${product.id}, -1)">-</button>
-        <input type="number" class="qty-input" value="${item.quantity}" onchange="updateCartInput(${product.id}, this.value)">
-        <button class="qty-btn" onclick="changeCartQty(${product.id}, 1)">+</button>
+      <div class="budget-qty-controls" data-action="qty" data-id="${product.id}">
+        <button class="qty-btn" data-action="qty-dec" data-id="${product.id}" aria-label="Diminuir quantidade">-</button>
+        <input type="number" class="qty-input" value="${item.quantity}" data-action="qty-input" data-id="${product.id}" inputmode="numeric" pattern="[0-9]*">
+        <button class="qty-btn" data-action="qty-inc" data-id="${product.id}" aria-label="Aumentar quantidade">+</button>
       </div>
-      <div class="budget-item-remove" onclick="removeFromCart(${product.id})" title="Remover"><i data-lucide="trash"></i></div>
+      <button class="budget-item-remove" data-action="remove-cart" data-id="${product.id}" title="Remover" aria-label="Remover item do orçamento"><i data-lucide="trash"></i></button>
     `;
     container.appendChild(div);
   });
 
-  totalValLabel.innerText = `R$ ${totalSum.toFixed(2)}`;
-  lucide.createIcons();
+  totalValLabel.innerText = formatCurrency(totalSum);
+  batchCreateIcons();
 }
 
 // --- SIMULADOR DE MATERIAIS ENGINE ---
 function calculateMaterials() {
-  const area = parseFloat(document.getElementById("simArea").value) || 0;
+  const area = getNumericInput("simArea");
   const rooms = parseInt(document.getElementById("simComodos").value) || 0;
   const type = document.getElementById("simObraType").value;
 
@@ -994,7 +1158,8 @@ function addCalculatedMaterialsToCart() {
   const type = document.getElementById("simObraType").value;
 
   if (area <= 0) {
-    alert("Insira uma área maior que zero.");
+    showToast("Insira uma área maior que zero.");
+
     return;
   }
 
@@ -1034,7 +1199,7 @@ function submitBudgetForm(event) {
   event.preventDefault();
 
   if (cart.length === 0) {
-    alert("Adicione produtos ao seu orçamento antes de enviar.");
+    showToast("Adicione produtos ao seu orçamento antes de enviar.");
     return;
   }
 
@@ -1055,23 +1220,21 @@ function submitBudgetForm(event) {
 
   let totalEstimado = 0;
   cart.forEach((item, index) => {
-    const product = products.find(p => p.id === item.id);
+    const product = getProduct(item.id);
     if (product) {
       const itemVal = product.price * item.quantity;
       totalEstimado += itemVal;
       text += `${index + 1}. [${product.code}] ${product.name}\n`;
-      text += `   Qtd: ${item.quantity} | Unit: R$ ${product.price.toFixed(2)} | Total: R$ ${itemVal.toFixed(2)}\n`;
+      text += `   Qtd: ${item.quantity} | Unit: ${formatCurrency(product.price)} | Total: ${formatCurrency(itemVal)}\n`;
     }
   });
 
-  text += `\n*VALOR ESTIMADO (MATERIAIS):* R$ ${totalEstimado.toFixed(2)}\n\n`;
+  text += `\n*VALOR ESTIMADO (MATERIAIS):* ${formatCurrency(totalEstimado)}\n\n`;
   text += `_Gerado automaticamente pelo Catálogo Digital Constrular._`;
 
-  const encodedText = encodeURIComponent(text);
-  const whatsappUrl = `https://wa.me/5511999999999?text=${encodedText}`;
+  const whatsappUrl = buildWhatsAppUrl(text);
 
-  // Executar redirecionamento
-  window.open(whatsappUrl, "_blank");
+  window.open(whatsappUrl, "_blank", "noopener,noreferrer");
 
   // Mostrar modal de sucesso
   showConfirmationAlert("Orçamento enviado! Nosso time comercial abrirá sua conversa no WhatsApp para finalizar a cotação e frete.");
@@ -1096,10 +1259,9 @@ function submitProForm(event) {
   text += `*E-mail:* ${email}\n\n`;
   text += `Olá, gostaria de solicitar meu cadastro de parceiro para obter descontos comerciais especiais.`;
 
-  const encodedText = encodeURIComponent(text);
-  const whatsappUrl = `https://wa.me/5511999999999?text=${encodedText}`;
+  const whatsappUrl = buildWhatsAppUrl(text);
 
-  window.open(whatsappUrl, "_blank");
+  window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   showConfirmationAlert("Cadastro de profissional enviado! Entraremos em contato com sua tabela de descontos em breve.");
   
   document.getElementById("proForm").reset();
@@ -1109,48 +1271,27 @@ function buyViaWhatsapp(productId) {
   const product = products.find(p => p.id === productId);
   if (!product) return;
 
-  const text = `Olá, gostaria de solicitar um orçamento para o produto:\n\n*Item:* ${product.name}\n*Código:* ${product.code}\n*Marca:* ${product.brand}\n*Preço Unitário:* R$ ${product.price.toFixed(2)}`;
-  const encodedText = encodeURIComponent(text);
-  const whatsappUrl = `https://wa.me/5511999999999?text=${encodedText}`;
+  const text = `Olá, gostaria de solicitar um orçamento para o produto:\n\n*Item:* ${product.name}\n*Código:* ${product.code}\n*Marca:* ${product.brand}\n*Preço Unitário:* ${formatCurrency(product.price)}`;
+  const whatsappUrl = buildWhatsAppUrl(text);
 
-  window.open(whatsappUrl, "_blank");
+  window.open(whatsappUrl, "_blank", "noopener,noreferrer");
 }
 
 // --- CONTEXT NOTIFICATION (TOAST & ALERTS) ---
 function showToast(msg) {
-  // Criar div do Toast
+  const existingToast = document.querySelector(".toast-notification");
+  if (existingToast) existingToast.remove();
+
   const toast = document.createElement("div");
-  toast.style.position = "fixed";
-  toast.style.bottom = "100px";
-  toast.style.left = "50%";
-  toast.style.transform = "translateX(-50%)";
-  toast.style.backgroundColor = "var(--primary)";
-  toast.style.color = "#FFF";
-  toast.style.padding = "12px 24px";
-  toast.style.borderRadius = "50px";
-  toast.style.boxShadow = "var(--shadow-lg)";
-  toast.style.zIndex = "250";
-  toast.style.fontSize = "14px";
-  toast.style.fontWeight = "600";
-  toast.style.textAlign = "center";
-  toast.style.border = "1px solid var(--accent)";
-  toast.style.pointerEvents = "none";
-  toast.style.opacity = "0";
-  toast.style.transition = "opacity 0.3s ease, bottom 0.3s ease";
-  
+  toast.className = "toast-notification";
+  toast.setAttribute("role", "alert");
+  toast.setAttribute("aria-live", "polite");
   toast.innerText = msg;
   document.body.appendChild(toast);
 
-  // Forçar reflow para iniciar animação
+  setTimeout(() => toast.classList.add("visible"), 50);
   setTimeout(() => {
-    toast.style.opacity = "1";
-    toast.style.bottom = "110px";
-  }, 50);
-
-  // Remover após 3 segundos
-  setTimeout(() => {
-    toast.style.opacity = "0";
-    toast.style.bottom = "100px";
+    toast.classList.remove("visible");
     setTimeout(() => toast.remove(), 300);
   }, 3000);
 }
